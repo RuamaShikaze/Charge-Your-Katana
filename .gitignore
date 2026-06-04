@@ -1,0 +1,18 @@
+# Unity
+/[Ll]ibrary/
+/Temp/
+/Obj/
+/Build/
+/Builds/
+/ExportedObj/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svn
+*.tmp
+.DS_Store
