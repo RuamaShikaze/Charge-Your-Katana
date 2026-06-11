@@ -58,6 +58,7 @@ public static class ElementReaction
         {
             Debug.Log($"<color=purple>湮灭反应！{enemy.name} 电荷消失</color>");
             PlayElementFlash(enemy, ElementType.None, isExcited: false, isAnnihilation: true);
+            SoundManager.Instance.PlayAnnihilation(enemy.transform.position);
             Object.Destroy(enemy, 0.1f);
         }
     }
@@ -80,7 +81,7 @@ public static class ElementReaction
     public static class ElementTypes
     {
         public static GameObject shockWavePrefab;
-        public static float waveRadius = 8f; // 影响范围 = 视觉范围
+        public static float waveRadius = 16f; // 影响范围 = 视觉范围
 
         public static void CreateShockWave(Transform center, ElementType type)
         {

@@ -3,17 +3,14 @@ using UnityEngine;
 public class HexGridManager : MonoBehaviour
 {
     public static HexGridManager Instance;
-
-    [Header("六边形网格参数")]
-    public float hexSize = 2f;
+    [Header("六边形网格参数(全局唯一基准)")]
+    public float hexSize = 1.8f;   // 外接圆半径，和地板尺寸严格一致
     public Transform gridRoot;
-
     [Header("网格绘制范围")]
-    public int gridRange = 6; // 格子范围
-
+    public int gridRange = 10;
     [Header("网格线设置")]
     public bool drawGridLines = true;
-    public Color lineColor = Color.cyan;
+    public Color lineColor = Color.blue;
     public float lineWidth = 0.08f;
 
     private void Awake()
@@ -28,9 +25,6 @@ public class HexGridManager : MonoBehaviour
             DrawHexGrid();
     }
 
-    // ==========================
-    // 正确绘制六边形网格（已修复）
-    // ==========================
     private void DrawHexGrid()
     {
         GameObject lineRoot = new GameObject("HexGridLines");
@@ -46,37 +40,36 @@ public class HexGridManager : MonoBehaviour
         }
     }
 
+    // 绘制【标准平边朝上正六边形】，角度统一，无变形
     private void DrawSingleHex(HexCoord coord)
     {
         Vector3 center = HexToWorld(coord);
-        center.y = 0; // 强制贴地面，解决高度问题
+        center.y = 0;
 
         GameObject lineObj = new GameObject($"HexLine_{coord.Q}_{coord.R}");
         lineObj.transform.parent = gridRoot;
-
         LineRenderer lr = lineObj.AddComponent<LineRenderer>();
+
         lr.material = new Material(Shader.Find("Sprites/Default"));
         lr.startColor = lineColor;
         lr.endColor = lineColor;
         lr.startWidth = lineWidth;
         lr.endWidth = lineWidth;
         lr.useWorldSpace = true;
-        lr.loop = true; // 闭合六边形（关键修复）
+        lr.loop = true;
         lr.positionCount = 6;
 
-        // 正确六边形6个顶点
+        // 标准 Flat-Top 正六边形顶点角度（0°朝右，60°间隔）
         for (int i = 0; i < 6; i++)
         {
-            float angle = Mathf.Deg2Rad * (60 * i - 30);
+            float angle = Mathf.Deg2Rad * (60f * i);
             float x = hexSize * Mathf.Cos(angle);
             float z = hexSize * Mathf.Sin(angle);
             lr.SetPosition(i, center + new Vector3(x, 0, z));
         }
     }
 
-    // ==========================
-    // 坐标转换（正确）
-    // ==========================
+    // ========== 全局统一：轴向坐标 → 世界坐标 ==========
     public Vector3 HexToWorld(HexCoord coord)
     {
         float x = hexSize * 1.5f * coord.Q;
@@ -84,6 +77,7 @@ public class HexGridManager : MonoBehaviour
         return new Vector3(x, 0, z) + gridRoot.position;
     }
 
+    // ========== 全局统一：世界坐标 → 轴向坐标 ==========
     public HexCoord WorldToHex(Vector3 worldPos)
     {
         Vector3 local = worldPos - gridRoot.position;

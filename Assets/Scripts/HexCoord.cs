@@ -1,11 +1,14 @@
 using UnityEngine;
 
-// 正六边形 轴向坐标 (Q, R)
+// 六边形坐标 (Q, R)
 public struct HexCoord
 {
     public int Q;
     public int R;
     public int S => -Q - R;
+
+    // 六边形单元格的尺寸（可根据项目需求调整）
+    public static float HexSize = 1f;
 
     public HexCoord(int q, int r)
     {
@@ -13,7 +16,7 @@ public struct HexCoord
         R = r;
     }
 
-    // 六个邻格方向
+    // 方向数组
     public static readonly HexCoord[] Directions =
     {
         new HexCoord(1, 0),
@@ -24,26 +27,26 @@ public struct HexCoord
         new HexCoord(0, 1)
     };
 
-    // 相加
+    // 加法重载
     public static HexCoord operator +(HexCoord a, HexCoord b)
         => new HexCoord(a.Q + b.Q, a.R + b.R);
 
-    // 相减
+    // 减法重载
     public static HexCoord operator -(HexCoord a, HexCoord b)
         => new HexCoord(a.Q - b.Q, a.R - b.R);
 
-    // 判断相等
+    // 相等判断
     public static bool operator ==(HexCoord a, HexCoord b)
         => a.Q == b.Q && a.R == b.R;
 
     public static bool operator !=(HexCoord a, HexCoord b)
         => !(a == b);
 
-    // 获取邻格
+    // 获取相邻格子
     public HexCoord Neighbor(int dir)
         => this + Directions[dir];
 
-    // 网格距离
+    // 计算距离
     public int Distance(HexCoord other)
     {
         int dq = Mathf.Abs(Q - other.Q);
@@ -58,7 +61,7 @@ public struct HexCoord
     public override int GetHashCode()
         => Q ^ R;
 
-    // 求从 A 指向 B 的六边形最近方向
+    // 获取从 from 到 to 的方向
     public static int GetHexDirection(HexCoord from, HexCoord to)
     {
         HexCoord diff = to - from;
@@ -78,4 +81,29 @@ public struct HexCoord
         return bestDir;
     }
 
+    // 新增：将六边形坐标转换为世界坐标（核心补充方法）
+    public Vector3 HexToWorld()
+    {
+        // 六边形轴向坐标转世界坐标公式（水平布局，偶行偏移）
+        float x = HexSize * (3f / 2f * Q);
+        float z = HexSize * (Mathf.Sqrt(3) / 2f * Q + Mathf.Sqrt(3) * R);
+        // Y轴默认0，可根据需求调整（比如高度）
+        return new Vector3(x, 0, z);
+    }
+
+    // 可选：静态版本，支持直接通过 HexCoord.HexToWorld(coord) 调用
+    public static Vector3 HexToWorld(HexCoord coord)
+    {
+        return coord.HexToWorld();
+    }
+
+    // ----------------------------------------------------------------
+    // 【只添加这一个方法】解决你的报错！完全不改动原有代码！
+    // ----------------------------------------------------------------
+    public static Vector3 HexToWorld(int q, int r, float hexSize)
+    {
+        float x = hexSize * (3f / 2f * q);
+        float z = hexSize * (Mathf.Sqrt(3) / 2f * q + Mathf.Sqrt(3) * r);
+        return new Vector3(x, 0, z);
+    }
 }

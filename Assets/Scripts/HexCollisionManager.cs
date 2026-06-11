@@ -4,6 +4,10 @@ public static class HexCollisionManager
 {
     public static void HandleCollision(HexGridUnit attacker, HexGridUnit target)
     {
+        if (attacker.GetComponent<Wall>() != null || target.GetComponent<Wall>() != null)
+        {
+            return;
+        }
         EnemyCharge ecA = attacker.GetComponent<EnemyCharge>();
         EnemyCharge ecT = target.GetComponent<EnemyCharge>();
 

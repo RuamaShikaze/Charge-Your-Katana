@@ -123,7 +123,20 @@ public class HexGridUnit : MonoBehaviour
         transform.position = new Vector3(targetWorldPos.x, transform.position.y, targetWorldPos.z);
     }
 
-    public bool CheckWall(HexCoord hex) => false;
+    // 检查指定格子是否为墙体（不可通行）
+    public bool CheckWall(HexCoord hex)
+    {
+        // 遍历场景内所有墙体
+        Wall[] allWalls = Object.FindObjectsOfType<Wall>();
+        foreach (var wall in allWalls)
+        {
+            if (wall.GetWallCoord() == hex)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void UpdateChargeUI()
     {

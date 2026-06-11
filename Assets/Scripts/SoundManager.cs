@@ -18,27 +18,25 @@ public class SoundManager : MonoBehaviour
     public AudioClip katanaChoosen;
     public AudioClip shurikenChoosen;
     public AudioClip bgmClip;
+    public AudioClip Annihilation;
 
     private AudioSource _audioSource;
     private AudioSource bgmSource;
 
     void Awake()
     {
-        Instance = this;
-        _audioSource = GetComponent<AudioSource>();
-
-        if (Instance != null && Instance != this) Destroy(gameObject);
-        else
+        if (Instance != null && Instance != this)
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject); //跨场景保留BGM管理器
+            Destroy(gameObject);
+            return;
         }
-        //获取/新建BGM音源
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        _audioSource = GetComponent<AudioSource>();
         bgmSource = GetComponent<AudioSource>();
         if (bgmSource == null) bgmSource = gameObject.AddComponent<AudioSource>();
-
-        //BGM关键设置
-        bgmSource.loop = true;    //开启自动循环
+        bgmSource.loop = true;
         bgmSource.volume = masterVolume;
         bgmSource.playOnAwake = false;
     }
@@ -72,6 +70,11 @@ public class SoundManager : MonoBehaviour
     {
         PlaySound(shurikenThrow, pos);
         PlaySound(shurikenFlash, pos);
+    }
+    public void PlayAnnihilation(Vector3 pos)
+    {
+        PlaySound(Annihilation, pos);
+        
     }
 
     public void PlayShockWaveSound(Vector3 pos)

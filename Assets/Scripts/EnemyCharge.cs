@@ -23,6 +23,10 @@ public class EnemyCharge : MonoBehaviour
     public void DestroySelf()
     {
         Destroy(gameObject);
+        if (TurnManager.Instance != null)
+        {
+            TurnManager.Instance.CheckAllEnemyDefeated();
+        }
     }
     public void SetCharge(ElementType type)
     {
